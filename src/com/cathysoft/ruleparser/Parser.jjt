@@ -1,0 +1,95 @@
+/**
+ * JJTree template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";
+  STATIC = false;
+  MULTI = true;}PARSER_BEGIN(Parser)package com.cathysoft.ruleparser;
+
+import java.io.*;
+
+public class Parser{  public static void main(String args [])  {    InputStream is = ClassLoader.getSystemResourceAsStream("com/cathysoft/ruleparser/example1.txt");    Parser parser = new Parser(is);    try    {		ASTExpressionRoot root = parser.parse();
+		root.dump(" >");
+		    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(Parser)
+ASTExpressionRoot parse() #ExpressionRoot : {}
+{
+  < RULE >
+  "("
+  ClassList()
+  ")"
+  < LBRACKETS >
+  ( LOOKAHEAD(2)
+    "<" < NOT > < EMPTY > ">"
+    NotEmptyExpression()  )?
+  ( LOOKAHEAD(2)
+    "<" < CHECK > ">"
+    (
+      CheckExpression()    )+  )?
+  < RBRACKETS >
+  {
+    return jjtThis;  }}
+
+void ClassList() :{}
+{
+  < IDENTIFIER >
+  (
+    < DOT >
+    < IDENTIFIER >  )*
+  (
+	","
+    < IDENTIFIER >
+	(
+	  < DOT >
+	  < IDENTIFIER >
+	)*  )*}
+
+void NotEmptyExpression() :
+{}
+{
+  < ALL > < BUT > <IDENTIFIER> ("," < IDENTIFIER >)*
+| <IDENTIFIER> ("," < IDENTIFIER >)*}
+
+void CheckExpression() :
+{}
+{
+  < ASSERT > < STRING_LITERAL >
+| < DERIVATION > < STRING_LITERAL >}
+SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
+
+TOKEN [IGNORE_CASE] : /* KEYWORDS */
+{
+  < RULE : "RULE" >
+| < NOT : "NOT" >
+| < EMPTY : "EMPTY" >
+| < ALL : "ALL" >
+| < BUT : "BUT" >
+| < CHECK : "CHECK" >
+| < ASSERT : "ASSERT" >
+| < DERIVATION : "DERIVATION" >
+| < LEFT : "LEFT" >
+| < RIGHT : "RIGHT" >
+| < MID : "MID" >
+| < SIZE : "SIZE" >}
+TOKEN : /* OPERATOR */
+{
+  < LOGIC_OPER : "=" | ">" | "<" | ">=" | "<=" | "<>" >
+| < DERIVATION_OPER : "->" >
+| < DOT : "." >
+| < LBRACKETS : "{" >
+| < RBRACKETS : "}" >
+| < QUOTE : "\"" >
+}
+TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}
+TOKEN : /* STRING LETERALS */
+{
+  < STRING_LITERAL:
+      < QUOTE >
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      < QUOTE >
+  >}
+

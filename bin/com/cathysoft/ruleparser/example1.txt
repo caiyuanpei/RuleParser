@@ -1,0 +1,11 @@
+RULE(com.cathysoft.phdeers.User, com.cathysoft.Degree) {
+<NOT EMPTY>
+ALL BUT abc, def
+
+<CHECK>
+ASSERT "Basic.yxdm = \"10217\""
+ASSERT "MID(User.zyhm, 7, 8) = Basic.csrq"
+ASSERT "MID(User.zyhm, 17, 1) = Basic.xbm"
+DERIVATION "Basic.ksfs=\"11\" -> EMPTY(User.ssxwny, Degree.ssxwsydwm, Degree.ssxwsydw)"
+DERIVATION "User.zylx=\"1\" -> SIZE(User.zjhm) = 18"
+}
