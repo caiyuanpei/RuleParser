@@ -4,8 +4,7 @@ package com.cathysoft.ruleparser.jjt;
 
 public class ASTSizeFunction extends SimpleNode {
 	
-	private String domain;
-	private String field;
+	private ASTPath path;
 	
 	public ASTSizeFunction(int id) {
 		super(id);
@@ -20,21 +19,15 @@ public class ASTSizeFunction extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public String getDomain() {
-		return domain;
+	public ASTPath getPath() {
+		return path;
 	}
 
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public void setPath(ASTPath path) {
+		this.path = path;
 	}
 
-	public String getField() {
-		return field;
-	}
-
-	public void setField(String field) {
-		this.field = field;
-	}
+	
 }
 /*
  * JavaCC - OriginalChecksum=00e3216948c9d70f06a06f03ce1db53d (do not edit this

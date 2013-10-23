@@ -8,14 +8,14 @@
 
 import java.io.*;
 
-public class Parser{  public static void main(String args [])  {    InputStream is = ClassLoader.getSystemResourceAsStream("com/cathysoft/ruleparser/example1.txt");    Parser parser = new Parser(is);    try    {		ASTExpressionRoot root = parser.parse();
+public class Parser{  public static void main(String args [])  {    InputStream is = ClassLoader.getSystemResourceAsStream("example1.txt");    Parser parser = new Parser(is);    try    {		ASTExpressionRoot root = parser.parse();
 		root.dump(" >");
 		    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(Parser)
 ASTExpressionRoot parse() #ExpressionRoot : {}
 {
   < RULE >
   "("
-  ClassList()
+  ContextClassList()
   ")"
   < LBRACKETS >
   ( LOOKAHEAD(2)
@@ -29,33 +29,32 @@ ASTExpressionRoot parse() #ExpressionRoot : {}
   {
     return jjtThis;  }}
 
-void ClassList() :{}
+void ContextClassList() :{}
 {
-  < IDENTIFIER >
-  (
-    < DOT >
-    < IDENTIFIER >  )*
+  SignatureExpression()
   (
 	","
-    < IDENTIFIER >
-	(
-	  < DOT >
-	  < IDENTIFIER >
-	)*  )*}
+    SignatureExpression()  )*}
 
 void NotEmptyExpression() :
 {}
 {
-  < ALL > < BUT > <IDENTIFIER> ("," < IDENTIFIER >)*
-| <IDENTIFIER> ("," < IDENTIFIER >)*}
+  < ALL > < BUT > PathExpression() ("," PathExpression())*
+| PathExpression() ("," PathExpression())*}
 
 void CheckExpression() :
 {}
 {
-  < ASSERT > LogicalBodyExpression() #LogicalExpression
-| < DERIVATION > DerivationBodyExpression() #DerivationExpression}
+  AssertionExpression()
+|  DerivationExpression()}
 
-void LogicalBodyExpression() :{}
+void AssertionExpression() :{}{
+  < ASSERT > LogicalExpression()}
+
+void DerivationExpression() :{}{
+  < DERIVATION > DerivationBody()}
+
+void LogicalExpression() :{}
 {
   (    OperatorExpression()
     < LOGIC_OPER >
@@ -63,29 +62,20 @@ void LogicalBodyExpression() :{}
   )
 | EmptyFunction()}
 
-void DerivationBodyExpression() :{}
+void DerivationBody() :{}
 {
-  LogicalBodyExpression()
+  LogicalExpression()
   < DERIVATION_OPER >
-  LogicalBodyExpression()}
+  LogicalExpression()}
 
 void OperatorExpression() :
 {
 }
 {
-  DomainExpression()
+  PathExpression()
 | FunctionExpression()
 | < INTEGER_LITERAL >
 | < STRING_LITERAL >
-}
-
-void DomainExpression() :
-{
-}
-{
-  < IDENTIFIER >
-  < DOT >
-  < IDENTIFIER >
 }
 
 void FunctionExpression() :
@@ -105,15 +95,11 @@ void EmptyFunction() :
   < EMPTY >
   "("
   (
-    < IDENTIFIER >
-    < DOT >
-    < IDENTIFIER >
+    PathExpression()
   )
   (
     ","
-    < IDENTIFIER >
-    < DOT >
-    < IDENTIFIER >
+    PathExpression()
   )*
   ")"
 }
@@ -121,31 +107,26 @@ void EmptyFunction() :
 void SizeFunction() :
 {
   Token t;
+  ASTPath path;
 }
 {
   < SIZE >
   "("
-  t = < IDENTIFIER >  {
-    jjtThis.setDomain(t.image);  }
-  < DOT >
-  t = < IDENTIFIER >  {
-    jjtThis.setField(t.image);  }
+  path = PathExpression()  {
+    jjtThis.setPath(path);  }
   ")"
-  
 }
 
 void MidFunction() :
 {
   Token t;
+  ASTPath path;
 }
 {
   < MID >
   "("
-  t = < IDENTIFIER >  {
-    jjtThis.setDomain(t.image);  }
-  < DOT >
-  t = < IDENTIFIER >  {
-    jjtThis.setField(t.image);  }
+  path = PathExpression()  {
+    jjtThis.setPath(path);  }
   ","
   t = < INTEGER_LITERAL >
   {
@@ -159,56 +140,56 @@ void MidFunction() :
 void RightFunction() :
 {
   Token t;
-  String domain;
-  String field;
-  int length;
+  ASTPath path;
 }
 {
   < RIGHT >
   "("
-  t = < IDENTIFIER >  {
-    domain = t.image;  }
-  < DOT >
-  t = < IDENTIFIER >  {
-    field = t.image;  }
+  path = PathExpression()  {
+    jjtThis.setPath(path);  }
   ","
   t = < INTEGER_LITERAL >  {
-    length = Integer.parseInt(t.image);  }
+    jjtThis.setLength(Integer.parseInt(t.image));  }
   ")"
-  {
-    jjtThis.setDomain(domain);
-    jjtThis.setField(field);
-    jjtThis.setLength(length);
-  }
 }
 
 void LeftFunction() :
 {
   Token t;
-  String domain;
-  String field;
-  int length;
+  ASTPath path;
 }
 {
   < LEFT >
   "("
-  t = < IDENTIFIER >
-  {
-    domain = t.image;  }
-  < DOT >
-  t = < IDENTIFIER >
-  {
-    field = t.image;  }
+  path = PathExpression()  {
+    jjtThis.setPath(path);  }
   ","
   t = < INTEGER_LITERAL >  {
-    length = Integer.parseInt(t.image);
+    jjtThis.setLength(Integer.parseInt(t.image));
   }
   ")"
-  {
-    jjtThis.setDomain(domain);
-    jjtThis.setField(field);
-    jjtThis.setLength(length);  }
 }
+
+ASTPath PathExpression() #Path :
+{
+  Token t;
+}
+{
+  t = < IDENTIFIER >  {
+    jjtThis.setDomain(t.image);  }
+  < DOT >
+  < IDENTIFIER >  {
+    jjtThis.setField(t.image);  }  {
+    return jjtThis;  }
+}
+
+void SignatureExpression() #Signature :{}
+{
+  < IDENTIFIER >
+  (
+    < DOT >
+    < IDENTIFIER >
+  )*}
 SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
 
 TOKEN [IGNORE_CASE] : /* KEYWORDS */

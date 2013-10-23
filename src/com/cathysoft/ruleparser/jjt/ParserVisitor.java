@@ -5,20 +5,21 @@ public interface ParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
   public Object visit(ASTExpressionRoot node, Object data);
-  public Object visit(ASTClassList node, Object data);
+  public Object visit(ASTContextClassList node, Object data);
   public Object visit(ASTNotEmptyExpression node, Object data);
   public Object visit(ASTCheckExpression node, Object data);
-  public Object visit(ASTLogicalExpression node, Object data);
+  public Object visit(ASTAssertionExpression node, Object data);
   public Object visit(ASTDerivationExpression node, Object data);
-  public Object visit(ASTLogicalBodyExpression node, Object data);
-  public Object visit(ASTDerivationBodyExpression node, Object data);
+  public Object visit(ASTLogicalExpression node, Object data);
+  public Object visit(ASTDerivationBody node, Object data);
   public Object visit(ASTOperatorExpression node, Object data);
-  public Object visit(ASTDomainExpression node, Object data);
   public Object visit(ASTFunctionExpression node, Object data);
   public Object visit(ASTEmptyFunction node, Object data);
   public Object visit(ASTSizeFunction node, Object data);
   public Object visit(ASTMidFunction node, Object data);
   public Object visit(ASTRightFunction node, Object data);
   public Object visit(ASTLeftFunction node, Object data);
+  public Object visit(ASTPath node, Object data);
+  public Object visit(ASTSignature node, Object data);
 }
-/* JavaCC - OriginalChecksum=ffaebf237b896f34dc0ad028c08d7b8e (do not edit this line) */
+/* JavaCC - OriginalChecksum=aa454499455cd810e85d391db4eb2fbe (do not edit this line) */

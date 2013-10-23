@@ -4,8 +4,7 @@ package com.cathysoft.ruleparser.jjt;
 
 public class ASTLeftFunction extends SimpleNode {
 
-	private String domain;
-	private String field;
+	private ASTPath path;
 	private int length;
 	
 	public ASTLeftFunction(int id) {
@@ -21,20 +20,12 @@ public class ASTLeftFunction extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 	
-	public String getDomain() {
-		return domain;
+	public ASTPath getPath() {
+		return path;
 	}
 
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
-	public String getField() {
-		return field;
-	}
-
-	public void setField(String field) {
-		this.field = field;
+	public void setPath(ASTPath path) {
+		this.path = path;
 	}
 
 	public int getLength() {

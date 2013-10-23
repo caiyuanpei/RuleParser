@@ -4,40 +4,42 @@ package com.cathysoft.ruleparser.jjt;
 public interface ParserTreeConstants
 {
   public int JJTEXPRESSIONROOT = 0;
-  public int JJTCLASSLIST = 1;
+  public int JJTCONTEXTCLASSLIST = 1;
   public int JJTNOTEMPTYEXPRESSION = 2;
   public int JJTCHECKEXPRESSION = 3;
-  public int JJTLOGICALEXPRESSION = 4;
+  public int JJTASSERTIONEXPRESSION = 4;
   public int JJTDERIVATIONEXPRESSION = 5;
-  public int JJTLOGICALBODYEXPRESSION = 6;
-  public int JJTDERIVATIONBODYEXPRESSION = 7;
+  public int JJTLOGICALEXPRESSION = 6;
+  public int JJTDERIVATIONBODY = 7;
   public int JJTOPERATOREXPRESSION = 8;
-  public int JJTDOMAINEXPRESSION = 9;
-  public int JJTFUNCTIONEXPRESSION = 10;
-  public int JJTEMPTYFUNCTION = 11;
-  public int JJTSIZEFUNCTION = 12;
-  public int JJTMIDFUNCTION = 13;
-  public int JJTRIGHTFUNCTION = 14;
-  public int JJTLEFTFUNCTION = 15;
+  public int JJTFUNCTIONEXPRESSION = 9;
+  public int JJTEMPTYFUNCTION = 10;
+  public int JJTSIZEFUNCTION = 11;
+  public int JJTMIDFUNCTION = 12;
+  public int JJTRIGHTFUNCTION = 13;
+  public int JJTLEFTFUNCTION = 14;
+  public int JJTPATH = 15;
+  public int JJTSIGNATURE = 16;
 
 
   public String[] jjtNodeName = {
     "ExpressionRoot",
-    "ClassList",
+    "ContextClassList",
     "NotEmptyExpression",
     "CheckExpression",
-    "LogicalExpression",
+    "AssertionExpression",
     "DerivationExpression",
-    "LogicalBodyExpression",
-    "DerivationBodyExpression",
+    "LogicalExpression",
+    "DerivationBody",
     "OperatorExpression",
-    "DomainExpression",
     "FunctionExpression",
     "EmptyFunction",
     "SizeFunction",
     "MidFunction",
     "RightFunction",
     "LeftFunction",
+    "Path",
+    "Signature",
   };
 }
-/* JavaCC - OriginalChecksum=ac9404f373812de2bb999c5966756cc5 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1485702195c0fc3fee901f355c4449c9 (do not edit this line) */

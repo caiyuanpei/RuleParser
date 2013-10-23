@@ -5,7 +5,9 @@ RULE(
 	
 	/* Not Empty Check */
 	<NOT EMPTY>
-	ALL BUT abc, def
+	ALL BUT 
+		User.abc, Degree.def,
+		User.xyz
 	
 	/* Rule Check */
 	<CHECK>
