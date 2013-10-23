@@ -2,20 +2,50 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package com.cathysoft.ruleparser.jjt;
 
-public
-class ASTRightFunction extends SimpleNode {
-  public ASTRightFunction(int id) {
-    super(id);
-  }
+public class ASTRightFunction extends SimpleNode {
+	
+	private String domain;
+	private String field;
+	private int length;
+	
+	public ASTRightFunction(int id) {
+		super(id);
+	}
 
-  public ASTRightFunction(Parser p, int id) {
-    super(p, id);
-  }
+	public ASTRightFunction(Parser p, int id) {
+		super(p, id);
+	}
 
+	/** Accept the visitor. **/
+	public Object jjtAccept(ParserVisitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(ParserVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
 }
-/* JavaCC - OriginalChecksum=31949a4be0d6a933b72421f0497c855b (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=31949a4be0d6a933b72421f0497c855b (do not edit this
+ * line)
+ */

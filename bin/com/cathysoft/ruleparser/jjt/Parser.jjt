@@ -3,7 +3,7 @@
  */options{  JDK_VERSION = "1.5";
   STATIC = false;
   MULTI = true;
-  DEBUG_PARSER = false;
+  DEBUG_PARSER = true;
   VISITOR = true;}PARSER_BEGIN(Parser)package com.cathysoft.ruleparser.jjt;
 
 import java.io.*;
@@ -120,62 +120,94 @@ void EmptyFunction() :
 
 void SizeFunction() :
 {
+  Token t;
 }
 {
   < SIZE >
   "("
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    jjtThis.setDomain(t.image);  }
   < DOT >
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    jjtThis.setField(t.image);  }
   ")"
   
 }
 
 void MidFunction() :
 {
+  Token t;
 }
 {
   < MID >
   "("
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    jjtThis.setDomain(t.image);  }
   < DOT >
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    jjtThis.setField(t.image);  }
   ","
-  < INTEGER_LITERAL >
+  t = < INTEGER_LITERAL >
+  {
+    jjtThis.setStart(Integer.parseInt(t.image));  }
   ","
-  < INTEGER_LITERAL >
+  t = < INTEGER_LITERAL >  {
+    jjtThis.setLength(Integer.parseInt(t.image));  }
   ")"
-  
 }
 
 void RightFunction() :
 {
+  Token t;
+  String domain;
+  String field;
+  int length;
 }
 {
   < RIGHT >
   "("
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    domain = t.image;  }
   < DOT >
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    field = t.image;  }
   ","
-  < INTEGER_LITERAL >
+  t = < INTEGER_LITERAL >  {
+    length = Integer.parseInt(t.image);  }
   ")"
-  
+  {
+    jjtThis.setDomain(domain);
+    jjtThis.setField(field);
+    jjtThis.setLength(length);
+  }
 }
 
 void LeftFunction() :
 {
+  Token t;
+  String domain;
+  String field;
+  int length;
 }
 {
   < LEFT >
   "("
-  < IDENTIFIER >
+  t = < IDENTIFIER >
+  {
+    domain = t.image;  }
   < DOT >
-  < IDENTIFIER >
+  t = < IDENTIFIER >
+  {
+    field = t.image;  }
   ","
-  < INTEGER_LITERAL >
+  t = < INTEGER_LITERAL >  {
+    length = Integer.parseInt(t.image);
+  }
   ")"
-  
+  {
+    jjtThis.setDomain(domain);
+    jjtThis.setField(field);
+    jjtThis.setLength(length);  }
 }
 SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
 
