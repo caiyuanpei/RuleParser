@@ -1,233 +1,0 @@
-/**
- * JJTree template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
- */options{  JDK_VERSION = "1.5";
-  STATIC = false;
-  MULTI = true;
-  DEBUG_PARSER = true;
-  VISITOR = true;}PARSER_BEGIN(Parser)package com.cathysoft.ruleparser.jjt;
-
-import java.io.*;
-
-public class Parser{  public static void main(String args [])  {    InputStream is = ClassLoader.getSystemResourceAsStream("example1.txt");    Parser parser = new Parser(is);    try    {		ASTExpressionRoot root = parser.parse();
-		root.dump(" >");
-		    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(Parser)
-ASTExpressionRoot parse() #ExpressionRoot : {}
-{
-  < RULE >
-  "("
-  ContextClassList()
-  ")"
-  < LBRACKETS >
-  ( LOOKAHEAD(2)
-    "<" < NOT > < EMPTY > ">"
-    NotEmptyExpression()  )?
-  ( LOOKAHEAD(2)
-    "<" < CHECK > ">"
-    (
-      CheckExpression()    )+  )?
-  < RBRACKETS >
-  {
-    return jjtThis;  }}
-
-void ContextClassList() :{}
-{
-  SignatureExpression()
-  (
-	","
-    SignatureExpression()  )*}
-
-void NotEmptyExpression() :
-{}
-{
-  < ALL > < BUT > PathExpression() ("," PathExpression())*
-| PathExpression() ("," PathExpression())*}
-
-void CheckExpression() :
-{}
-{
-  AssertionExpression()
-|  DerivationExpression()}
-
-void AssertionExpression() :{}{
-  < ASSERT > LogicalExpression()}
-
-void DerivationExpression() :{}{
-  < DERIVATION > DerivationBody()}
-
-void LogicalExpression() :{}
-{
-  (    OperatorExpression()
-    < LOGIC_OPER >
-    OperatorExpression()
-  )
-| EmptyFunction()}
-
-void DerivationBody() :{}
-{
-  LogicalExpression()
-  < DERIVATION_OPER >
-  LogicalExpression()}
-
-void OperatorExpression() :
-{
-}
-{
-  PathExpression()
-| FunctionExpression()
-| < INTEGER_LITERAL >
-| < STRING_LITERAL >
-}
-
-void FunctionExpression() :
-{
-}
-{
-  LeftFunction()
-| RightFunction()
-| MidFunction()
-| SizeFunction()
-}
-
-void EmptyFunction() :
-{
-}
-{
-  < EMPTY >
-  "("
-  (
-    PathExpression()
-  )
-  (
-    ","
-    PathExpression()
-  )*
-  ")"
-}
-
-void SizeFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < SIZE >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ")"
-}
-
-void MidFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < MID >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ","
-  t = < INTEGER_LITERAL >
-  {
-    jjtThis.setStart(Integer.parseInt(t.image));  }
-  ","
-  t = < INTEGER_LITERAL >  {
-    jjtThis.setLength(Integer.parseInt(t.image));  }
-  ")"
-}
-
-void RightFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < RIGHT >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ","
-  t = < INTEGER_LITERAL >  {
-    jjtThis.setLength(Integer.parseInt(t.image));  }
-  ")"
-}
-
-void LeftFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < LEFT >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ","
-  t = < INTEGER_LITERAL >  {
-    jjtThis.setLength(Integer.parseInt(t.image));
-  }
-  ")"
-}
-
-ASTPath PathExpression() #Path :
-{
-  Token t;
-}
-{
-  t = < IDENTIFIER >  {
-    jjtThis.setDomain(t.image);  }
-  < DOT >
-  < IDENTIFIER >  {
-    jjtThis.setField(t.image);  }  {
-    return jjtThis;  }
-}
-
-void SignatureExpression() #Signature :{}
-{
-  < IDENTIFIER >
-  (
-    < DOT >
-    < IDENTIFIER >
-  )*}
-SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
-
-TOKEN [IGNORE_CASE] : /* KEYWORDS */
-{
-  < RULE : "RULE" >
-| < NOT : "NOT" >
-| < EMPTY : "EMPTY" >
-| < ALL : "ALL" >
-| < BUT : "BUT" >
-| < CHECK : "CHECK" >
-| < ASSERT : "ASSERT" >
-| < DERIVATION : "DERIVATION" >
-| < LEFT : "LEFT" >
-| < RIGHT : "RIGHT" >
-| < MID : "MID" >
-| < SIZE : "SIZE" >}
-TOKEN : /* OPERATOR */
-{
-  < LOGIC_OPER : "=" | ">" | "<" | ">=" | "<=" | "<>" >
-| < DERIVATION_OPER : "->" >
-| < DOT : "." >
-| < LBRACKETS : "{" >
-| < RBRACKETS : "}" >
-| < QUOTE : "\"" >
-}
-TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}
-TOKEN : /* STRING LETERALS */
-{
-  < STRING_LITERAL:
-      < QUOTE >
-      (   (~["\"","\\","\n","\r"])
-        | ("\\"
-            ( ["n","t","b","r","f","\\","'","\""]
-            | ["0"-"7"] ( ["0"-"7"] )?
-            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
-            )
-          )
-      )*
-      < QUOTE >
-  >}
-
