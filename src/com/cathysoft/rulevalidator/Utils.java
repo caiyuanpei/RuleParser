@@ -34,4 +34,24 @@ public class Utils {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static boolean isEmpty(Object obj, String fieldName) {
+		try {
+			@SuppressWarnings("rawtypes")
+			Class clazz = obj.getClass();
+			@SuppressWarnings("unchecked")
+			Method method = clazz.getDeclaredMethod("get"+fieldName.substring(0,1).toUpperCase()+fieldName.substring(1));
+			Object value = method.invoke(obj);
+			
+			if(value == null)
+				return true;
+			else if(value instanceof String && ((String)value).trim().length()==0)
+				return true;
+			else
+				return false;
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
