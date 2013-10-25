@@ -9,9 +9,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cathysoft.ruleparser.jjt.ASTAssertionExpression;
 import com.cathysoft.ruleparser.jjt.ASTCheckExpression;
 import com.cathysoft.ruleparser.jjt.ASTContextClassList;
+import com.cathysoft.ruleparser.jjt.ASTDerivationExpression;
+import com.cathysoft.ruleparser.jjt.ASTErrorCodeExpression;
 import com.cathysoft.ruleparser.jjt.ASTExpressionRoot;
+import com.cathysoft.ruleparser.jjt.ASTLogicalExpression;
 import com.cathysoft.ruleparser.jjt.ASTNotEmptyExpression;
 import com.cathysoft.ruleparser.jjt.ASTPath;
 import com.cathysoft.ruleparser.jjt.ASTSignature;
@@ -100,7 +104,14 @@ public class RuleValidator {
 			if(node instanceof ASTNotEmptyExpression) {
 				validateNotEmptyExpression(context, (ASTNotEmptyExpression)node, result);
 			} else if(node instanceof ASTCheckExpression) {
-				
+				Node checkNode = node.jjtGetChild(0);
+				if(checkNode instanceof ASTAssertionExpression) {
+					validateAssertionExpression(context, (ASTAssertionExpression)checkNode, result);
+				} else if(checkNode instanceof ASTDerivationExpression) {
+					validateDerivationExpression(context, (ASTDerivationExpression)checkNode, result);
+				} else {
+					throw new RuntimeException("Unkown Child Under Check Expression.");
+				}
 				
 			}
 		}
@@ -132,16 +143,36 @@ public class RuleValidator {
 			//check
 			for(Entry<String, Set<String>> entry : checkMap.entrySet()) {
 				for(String fieldName : entry.getValue()) {
-					Object value = Utils.getValue(context.get(entry.getKey()), fieldName);
-					if(value == null)
-						result.error(Level.NORMAL, fieldName, "Field '"+fieldName+"' Is Empty.");
-					if(value instanceof String && ((String)value).trim().length()==0)
+					if(Utils.isEmpty(context.get(entry.getKey()), fieldName))
 						result.error(Level.NORMAL, fieldName, "Field '"+fieldName+"' Is Empty.");
 				}
 			}
 		} else {
-			
+			//unimplements
+			//TODO
 		}
 		
+	}
+	
+	private void validateAssertionExpression(ExecutionContext context,
+			ASTAssertionExpression exp, ValidationResult result) {
+		ASTLogicalExpression logicExp = (ASTLogicalExpression) exp.jjtGetChild(0);
+		ASTErrorCodeExpression errExp = (ASTErrorCodeExpression) exp.jjtGetChild(1);
+		
+		boolean execResult = executeLogicalExpression(context, logicExp);
+		if(!execResult)
+			//TODO
+			result.error(Level.NORMAL, "","");
+	}
+	
+	private void validateDerivationExpression(ExecutionContext context,
+			ASTDerivationExpression exp, ValidationResult result) {
+		
+	}
+	
+	private boolean executeLogicalExpression(ExecutionContext context, ASTLogicalExpression expression) {
+		
+		
+		return false;
 	}
 }

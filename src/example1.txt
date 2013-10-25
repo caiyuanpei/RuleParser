@@ -11,9 +11,9 @@ RULE(
 	
 	/* Rule Check */
 	<CHECK>
-	ASSERT Basic.yxdm = "10217"
-	ASSERT MID(User.zyhm, 7, 8) = Basic.csrq
-	ASSERT MID(User.zyhm, 17, 1) = Basic.xbm
-	DERIVATION Basic.ksfs="11" -> EMPTY(User.ssxwny, Degree.ssxwsydwm, Degree.ssxwsydw)
-	DERIVATION User.zylx="1" -> SIZE(User.zjhm) = 18
+	ASSERT Basic.yxdm = "10217" #{Basic.yxdm} error.yxdm.not_10217
+	ASSERT MID(User.zyhm, 7, 8) = Basic.csrq #{User.username} error.username.size_not_18
+	ASSERT MID(User.zyhm, 17, 1) = Basic.xbm #{User.username} error.username.size_not_18
+	DERIVATION Basic.ksfs="11" -> EMPTY(User.ssxwny, Degree.ssxwsydwm, Degree.ssxwsydw) #{User.username} error.username.size_not_18
+	DERIVATION User.zylx="1" -> SIZE(User.zjhm) = 18 #{User.username} error.username.size_not_18
 }

@@ -5,6 +5,6 @@ RULE(
 	ALL BUT User.id
 	
 	<CHECK>
-	ASSERT SIZE(User.username) = 18
-	ASSERT User.question <> User.answer
+	ASSERT SIZE(User.username) = 18 #{User.username} error.username.size_not_18
+	ASSERT User.question <> User.answer #{User.answer} error.answer.same_with_question
 }

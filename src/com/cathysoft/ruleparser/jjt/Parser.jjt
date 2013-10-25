@@ -62,14 +62,17 @@ void NotEmptyExpression() :
 void CheckExpression() :
 {}
 {
-  AssertionExpression()
-|  DerivationExpression()}
+  AssertionExpression() ErrorCodeExpression()
+|  DerivationExpression() ErrorCodeExpression()}
 
 void AssertionExpression() :{}{
   < ASSERT > LogicalExpression()}
 
 void DerivationExpression() :{}{
   < DERIVATION > DerivationBody()}
+
+void ErrorCodeExpression():{}{
+  "#" < LBRACKETS > PathExpression() < RBRACKETS > SignatureExpression()}
 
 void LogicalExpression() :{}
 {
