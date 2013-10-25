@@ -26,4 +26,21 @@ public class ExecutionContext {
 		signatures.add(signature);
 		context.put(className, object);
 	}
+	
+	public Object get(String domain) {
+		return context.get(domain);
+	}
+	
+	public boolean containsClass(String signature) {
+		return signatures.contains(signature);
+	}
+	
+	public String getSignature(String className) {
+		for(String sig : signatures) {
+			if(sig.endsWith(className)) {
+				return sig;
+			}
+		}
+		return null;
+	}
 }

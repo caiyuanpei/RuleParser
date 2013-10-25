@@ -4,13 +4,10 @@
 /ASTContextClassList.java
 /ASTDerivationBody.java
 /ASTDerivationExpression.java
-/ASTEmptyFunction.java
 /ASTExpressionRoot.java
 /ASTFunctionExpression.java
 /ASTLogicalExpression.java
-/ASTNotEmptyExpression.java
 /ASTOperatorExpression.java
-/ASTSignature.java
 /JJTParserState.java
 /Node.java
 /ParseException.java

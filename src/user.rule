@@ -1,0 +1,10 @@
+RULE(
+	com.cathysoft.phdeers.domains.User) {
+	
+	<NOT EMPTY>
+	ALL BUT User.id
+	
+	<CHECK>
+	ASSERT SIZE(User.username) = 18
+	ASSERT User.question <> User.answer
+}

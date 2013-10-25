@@ -3,7 +3,7 @@
  */options{  JDK_VERSION = "1.5";
   STATIC = false;
   MULTI = true;
-  DEBUG_PARSER = true;
+  DEBUG_PARSER = false;
   VISITOR = true;}PARSER_BEGIN(Parser)package com.cathysoft.ruleparser.jjt;
 
 import java.io.*;
@@ -37,10 +37,27 @@ void ContextClassList() :{}
     SignatureExpression()  )*}
 
 void NotEmptyExpression() :
-{}
 {
-  < ALL > < BUT > PathExpression() ("," PathExpression())*
-| PathExpression() ("," PathExpression())*}
+  Token t;
+  ASTPath path;}
+{
+  < ALL > < BUT >
+  path = PathExpression()  {
+    jjtThis.addPath(path);  }
+  (
+    ","
+    path = PathExpression()    {
+      jjtThis.addPath(path);    }
+  )*  {
+    jjtThis.setAllbut(true);  }
+| path = PathExpression()  {
+    jjtThis.addPath(path);  }
+  (
+    ","
+    path = PathExpression()    {
+      jjtThis.addPath(path);    }
+  )*  {
+    jjtThis.setAllbut(false);  }}
 
 void CheckExpression() :
 {}
@@ -60,7 +77,8 @@ void LogicalExpression() :{}
     < LOGIC_OPER >
     OperatorExpression()
   )
-| EmptyFunction()}
+| EmptyFunction()
+| NotEmptyFunction()}
 
 void DerivationBody() :{}
 {
@@ -90,19 +108,37 @@ void FunctionExpression() :
 
 void EmptyFunction() :
 {
+  ASTPath path;
 }
 {
   < EMPTY >
   "("
   (
-    PathExpression()
+    path = PathExpression()    {
+      jjtThis.addPath(path);    }
   )
   (
     ","
-    PathExpression()
+    path = PathExpression()    {
+      jjtThis.addPath(path);    }
   )*
   ")"
 }
+
+void NotEmptyFunction() :{
+  ASTPath path;}{
+  < NOT_EMPTY >
+  "("
+  (
+    path = PathExpression()    {
+      jjtThis.addPath(path);    }
+  )
+  (
+    ","
+    path = PathExpression()    {
+      jjtThis.addPath(path);    }
+  )*
+  ")"  }
 
 void SizeFunction() :
 {
@@ -183,13 +219,23 @@ ASTPath PathExpression() #Path :
     return jjtThis;  }
 }
 
-void SignatureExpression() #Signature :{}
+void SignatureExpression() #Signature :{
+  Token t;
+  String s;}
 {
-  < IDENTIFIER >
+  t = < IDENTIFIER >  {
+    jjtThis.setClassName(t.image);
+    s = t.image;  }
   (
-    < DOT >
-    < IDENTIFIER >
-  )*}
+    t = < DOT >    {
+      s += t.image;    }
+    t = < IDENTIFIER >    {
+      jjtThis.setClassName(t.image);
+      s += t.image;    }
+  )*
+  {
+    jjtThis.setSignature(s);  }
+}
 SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
 
 TOKEN [IGNORE_CASE] : /* KEYWORDS */
@@ -197,6 +243,7 @@ TOKEN [IGNORE_CASE] : /* KEYWORDS */
   < RULE : "RULE" >
 | < NOT : "NOT" >
 | < EMPTY : "EMPTY" >
+| < NOT_EMPTY : "NOT_EMPTY" >
 | < ALL : "ALL" >
 | < BUT : "BUT" >
 | < CHECK : "CHECK" >
