@@ -106,9 +106,9 @@ public class RuleValidator {
 			} else if(node instanceof ASTCheckExpression) {
 				Node checkNode = node.jjtGetChild(0);
 				if(checkNode instanceof ASTAssertionExpression) {
-					validateAssertionExpression(context, (ASTAssertionExpression)checkNode, result);
+					validateAssertionExpression(context, (ASTAssertionExpression)checkNode, (ASTErrorCodeExpression)node.jjtGetChild(1), result);
 				} else if(checkNode instanceof ASTDerivationExpression) {
-					validateDerivationExpression(context, (ASTDerivationExpression)checkNode, result);
+					validateDerivationExpression(context, (ASTDerivationExpression)checkNode, (ASTErrorCodeExpression)node.jjtGetChild(1), result);
 				} else {
 					throw new RuntimeException("Unkown Child Under Check Expression.");
 				}
@@ -155,22 +155,27 @@ public class RuleValidator {
 	}
 	
 	private void validateAssertionExpression(ExecutionContext context,
-			ASTAssertionExpression exp, ValidationResult result) {
+			ASTAssertionExpression exp, ASTErrorCodeExpression errExp, ValidationResult result) {
 		ASTLogicalExpression logicExp = (ASTLogicalExpression) exp.jjtGetChild(0);
-		ASTErrorCodeExpression errExp = (ASTErrorCodeExpression) exp.jjtGetChild(1);
 		
 		boolean execResult = executeLogicalExpression(context, logicExp);
 		if(!execResult)
-			//TODO
-			result.error(Level.NORMAL, "","");
+			result.errorByCode(Level.NORMAL, 
+					errExp.getErrorPath().getDomain(), 
+					errExp.getErrorPath().getField(),
+					errExp.getErrorCode().getSignature());
 	}
 	
 	private void validateDerivationExpression(ExecutionContext context,
-			ASTDerivationExpression exp, ValidationResult result) {
+			ASTDerivationExpression exp, ASTErrorCodeExpression errExp,  ValidationResult result) {
 		
 	}
 	
 	private boolean executeLogicalExpression(ExecutionContext context, ASTLogicalExpression expression) {
+		String opr = expression.getOperator();
+		
+		
+		
 		
 		
 		return false;

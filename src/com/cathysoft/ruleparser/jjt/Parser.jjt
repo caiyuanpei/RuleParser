@@ -71,13 +71,22 @@ void AssertionExpression() :{}{
 void DerivationExpression() :{}{
   < DERIVATION > DerivationBody()}
 
-void ErrorCodeExpression():{}{
-  "#" < LBRACKETS > PathExpression() < RBRACKETS > SignatureExpression()}
+void ErrorCodeExpression():{
+  ASTPath path;
+  ASTSignature sig;}{
+  "#" < LBRACKETS >
+  path = PathExpression()  {
+    jjtThis.setErrorPath(path);  }
+  < RBRACKETS >
+  sig = SignatureExpression()  {
+    jjtThis.setErrorCode(sig);  }}
 
-void LogicalExpression() :{}
+void LogicalExpression() :{
+  Token t;}
 {
   (    OperatorExpression()
-    < LOGIC_OPER >
+    t = < LOGIC_OPER >    {
+      jjtThis.setOperator(t.image);    }
     OperatorExpression()
   )
 | EmptyFunction()
@@ -217,12 +226,12 @@ ASTPath PathExpression() #Path :
   t = < IDENTIFIER >  {
     jjtThis.setDomain(t.image);  }
   < DOT >
-  < IDENTIFIER >  {
+  t = < IDENTIFIER >  {
     jjtThis.setField(t.image);  }  {
     return jjtThis;  }
 }
 
-void SignatureExpression() #Signature :{
+ASTSignature SignatureExpression() #Signature :{
   Token t;
   String s;}
 {
@@ -237,7 +246,8 @@ void SignatureExpression() #Signature :{
       s += t.image;    }
   )*
   {
-    jjtThis.setSignature(s);  }
+    jjtThis.setSignature(s);  }  {
+    return jjtThis;  }
 }
 SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
 

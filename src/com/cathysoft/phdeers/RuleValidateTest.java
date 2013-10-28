@@ -16,7 +16,7 @@ public class RuleValidateTest{
 		user.setUsername("220202198402020911");
 		user.setPassword("123");
 		user.setName("蔡元沛");
-		user.setQuestion("");
+		user.setQuestion("-");
 		user.setAnswer("-");
 		user.setEmail("caiyuanpei@vip.qq.com");
 		user.setRoles(Roles.GKZK_EXAMINEE);

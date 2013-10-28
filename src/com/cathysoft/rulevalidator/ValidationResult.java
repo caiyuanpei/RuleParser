@@ -25,6 +25,12 @@ public class ValidationResult {
 		
 		logger.error(level.name()+": "+message);
 	}
+	
+	public void errorByCode(Level level, String domain, String field, String errorCode) {
+		this.valid = false;
+		
+		logger.error(String.format("%s: DOMINA=%s, FIELD=%s, ERROR_CODE=%s", level.name(), domain, field, errorCode));
+	}
 
 	public boolean isValid() {
 		return valid;

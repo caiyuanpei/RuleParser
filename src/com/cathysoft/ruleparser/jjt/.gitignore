@@ -6,8 +6,6 @@
 /ASTDerivationExpression.java
 /ASTExpressionRoot.java
 /ASTFunctionExpression.java
-/ASTLogicalExpression.java
-/ASTOperatorExpression.java
 /JJTParserState.java
 /Node.java
 /ParseException.java
@@ -20,4 +18,3 @@
 /SimpleNode.java
 /Token.java
 /TokenMgrError.java
-/ASTErrorCodeExpression.java
