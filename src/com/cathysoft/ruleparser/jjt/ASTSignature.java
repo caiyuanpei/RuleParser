@@ -2,42 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package com.cathysoft.ruleparser.jjt;
 
-public class ASTSignature extends SimpleNode {
-	
-	private String className;
-	
-	private String signature;
-	
-	public ASTSignature(int id) {
-		super(id);
-	}
+public
+class ASTSignature extends SimpleNode {
+  public ASTSignature(int id) {
+    super(id);
+  }
 
-	public ASTSignature(Parser p, int id) {
-		super(p, id);
-	}
+  public ASTSignature(Parser p, int id) {
+    super(p, id);
+  }
 
-	/** Accept the visitor. **/
-	public Object jjtAccept(ParserVisitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
 
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public String getSignature() {
-		return signature;
-	}
-
-	public void setSignature(String signature) {
-		this.signature = signature;
-	}
+  /** Accept the visitor. **/
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 }
-/*
- * JavaCC - OriginalChecksum=5f78f39475c86deac2f4eed343299018 (do not edit this
- * line)
- */
+/* JavaCC - OriginalChecksum=5f78f39475c86deac2f4eed343299018 (do not edit this line) */

@@ -2,42 +2,20 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package com.cathysoft.ruleparser.jjt;
 
-public class ASTPath extends SimpleNode {
-	
-	private String domain;
-	
-	private String field;
-	
-	public ASTPath(int id) {
-		super(id);
-	}
+public
+class ASTPath extends SimpleNode {
+  public ASTPath(int id) {
+    super(id);
+  }
 
-	public ASTPath(Parser p, int id) {
-		super(p, id);
-	}
+  public ASTPath(Parser p, int id) {
+    super(p, id);
+  }
 
-	/** Accept the visitor. **/
-	public Object jjtAccept(ParserVisitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
 
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
-	public String getField() {
-		return field;
-	}
-
-	public void setField(String field) {
-		this.field = field;
-	}
+  /** Accept the visitor. **/
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 }
-/*
- * JavaCC - OriginalChecksum=4bf35f6d30c76105071bff1da41e09a8 (do not edit this
- * line)
- */
+/* JavaCC - OriginalChecksum=4bf35f6d30c76105071bff1da41e09a8 (do not edit this line) */

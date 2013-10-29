@@ -3,259 +3,154 @@
  */options{  JDK_VERSION = "1.5";
   STATIC = false;
   MULTI = true;
-  DEBUG_PARSER = false;
+  DEBUG_PARSER = true;
   VISITOR = true;}PARSER_BEGIN(Parser)package com.cathysoft.ruleparser.jjt;
 
 import java.io.*;
 
-public class Parser{  public static void main(String args [])  {    InputStream is = ClassLoader.getSystemResourceAsStream("example1.txt");    Parser parser = new Parser(is);    try    {		ASTExpressionRoot root = parser.parse();
+public class Parser{  public static void main(String args [])  {    InputStream is = ClassLoader.getSystemResourceAsStream("example1.txt");    Parser parser = new Parser(is);    try    {		ASTExpression root = parser.parse();
 		root.dump(" >");
 		    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(Parser)
-ASTExpressionRoot parse() #ExpressionRoot : {}
+ASTExpression parse() #Expression : {}
 {
   < RULE >
   "("
-  ContextClassList()
+  ContextClasses()
   ")"
   < LBRACKETS >
   ( LOOKAHEAD(2)
-    "<" < NOT > < EMPTY > ">"
-    NotEmptyExpression()  )?
+    "<" < NOT_EMPTY > ">"
+    NotEmptyExp()  )?
   ( LOOKAHEAD(2)
     "<" < CHECK > ">"
     (
-      CheckExpression()    )+  )?
-  < RBRACKETS >
-  {
+      CheckExp()    )+  )?
+  < RBRACKETS >  {
     return jjtThis;  }}
 
-void ContextClassList() :{}
+void ContextClasses() :{}
 {
-  SignatureExpression()
+  SignatureExp()
   (
 	","
-    SignatureExpression()  )*}
+    SignatureExp()  )*}
 
-void NotEmptyExpression() :
-{
-  Token t;
-  ASTPath path;}
-{
-  < ALL > < BUT >
-  path = PathExpression()  {
-    jjtThis.addPath(path);  }
-  (
-    ","
-    path = PathExpression()    {
-      jjtThis.addPath(path);    }
-  )*  {
-    jjtThis.setAllbut(true);  }
-| path = PathExpression()  {
-    jjtThis.addPath(path);  }
-  (
-    ","
-    path = PathExpression()    {
-      jjtThis.addPath(path);    }
-  )*  {
-    jjtThis.setAllbut(false);  }}
-
-void CheckExpression() :
+void NotEmptyExp() :
 {}
 {
-  AssertionExpression() ErrorCodeExpression()
-|  DerivationExpression() ErrorCodeExpression()}
+  < ALL > < BUT >
+  
+  PathExp()
+  (
+    ","
+    PathExp()
+  )*
+| PathExp()
+  (
+    ","
+     PathExp()
+  )*}
 
-void AssertionExpression() :{}{
-  < ASSERT > LogicalExpression()}
-
-void DerivationExpression() :{}{
-  < DERIVATION > DerivationBody()}
-
-void ErrorCodeExpression():{}{
-  "#" < LBRACKETS > PathExpression() < RBRACKETS > SignatureExpression()}
-
-void LogicalExpression() :{}
+void CheckExp() #void:
+{}
 {
-  (    OperatorExpression()
+   AssertionExp()
+|  DerivationExp()}
+
+void AssertionExp() :{}{
+  < ASSERT >
+  "("
+  	PathExp()
+  	","
+  	< STRING_LITERAL >
+  ")"
+  LogicalExp()}
+
+void DerivationExp() :{}{
+  < DERIVATION >
+  "("
+  	PathExp()
+  	","
+  	< STRING_LITERAL >
+  ")"
+  DerivationBody()}
+
+void LogicalExp() :{}
+{LOOKAHEAD(2)
+  LogicalBody()
+| FunctionExp()}
+
+void LogicalBody() :{}{
+  (
+    OperatorExp()
     < LOGIC_OPER >
-    OperatorExpression()
-  )
-| EmptyFunction()
-| NotEmptyFunction()}
+    OperatorExp()
+  )}
 
 void DerivationBody() :{}
 {
-  LogicalExpression()
+  LogicalExp()
   < DERIVATION_OPER >
-  LogicalExpression()}
+  LogicalExp()}
 
-void OperatorExpression() :
+void OperatorExp() :
 {
 }
-{
-  PathExpression()
-| FunctionExpression()
+{ LOOKAHEAD(2)
+  PathExp()
+| FunctionExp()
 | < INTEGER_LITERAL >
 | < STRING_LITERAL >
 }
 
-void FunctionExpression() :
-{
-}
-{
-  LeftFunction()
-| RightFunction()
-| MidFunction()
-| SizeFunction()
-}
-
-void EmptyFunction() :
-{
-  ASTPath path;
-}
-{
-  < EMPTY >
+void FunctionExp() #Function :{}{ 
+  < IDENTIFIER >
   "("
+  Arguments()
+  ")"}
+
+void Arguments() :{}{
   (
-    path = PathExpression()    {
-      jjtThis.addPath(path);    }
+    < INTEGER_LITERAL >
+  | < STRING_LITERAL >
+  | PathExp()
   )
   (
     ","
-    path = PathExpression()    {
-      jjtThis.addPath(path);    }
-  )*
-  ")"
+    (      < INTEGER_LITERAL >
+    | < STRING_LITERAL >
+    | PathExp()
+    )
+  )*}
+
+void PathExp() #Path :
+{
+}
+{
+  < IDENTIFIER >  < DOT >
+  < IDENTIFIER >
 }
 
-void NotEmptyFunction() :{
-  ASTPath path;}{
-  < NOT_EMPTY >
-  "("
+void SignatureExp() #Signature :{
+}
+{
+  < IDENTIFIER >
   (
-    path = PathExpression()    {
-      jjtThis.addPath(path);    }
-  )
-  (
-    ","
-    path = PathExpression()    {
-      jjtThis.addPath(path);    }
+    < DOT >
+    < IDENTIFIER >
   )*
-  ")"  }
-
-void SizeFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < SIZE >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ")"
-}
-
-void MidFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < MID >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ","
-  t = < INTEGER_LITERAL >
-  {
-    jjtThis.setStart(Integer.parseInt(t.image));  }
-  ","
-  t = < INTEGER_LITERAL >  {
-    jjtThis.setLength(Integer.parseInt(t.image));  }
-  ")"
-}
-
-void RightFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < RIGHT >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ","
-  t = < INTEGER_LITERAL >  {
-    jjtThis.setLength(Integer.parseInt(t.image));  }
-  ")"
-}
-
-void LeftFunction() :
-{
-  Token t;
-  ASTPath path;
-}
-{
-  < LEFT >
-  "("
-  path = PathExpression()  {
-    jjtThis.setPath(path);  }
-  ","
-  t = < INTEGER_LITERAL >  {
-    jjtThis.setLength(Integer.parseInt(t.image));
-  }
-  ")"
-}
-
-ASTPath PathExpression() #Path :
-{
-  Token t;
-}
-{
-  t = < IDENTIFIER >  {
-    jjtThis.setDomain(t.image);  }
-  < DOT >
-  < IDENTIFIER >  {
-    jjtThis.setField(t.image);  }  {
-    return jjtThis;  }
-}
-
-void SignatureExpression() #Signature :{
-  Token t;
-  String s;}
-{
-  t = < IDENTIFIER >  {
-    jjtThis.setClassName(t.image);
-    s = t.image;  }
-  (
-    t = < DOT >    {
-      s += t.image;    }
-    t = < IDENTIFIER >    {
-      jjtThis.setClassName(t.image);
-      s += t.image;    }
-  )*
-  {
-    jjtThis.setSignature(s);  }
 }
 SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
 
 TOKEN [IGNORE_CASE] : /* KEYWORDS */
 {
   < RULE : "RULE" >
-| < NOT : "NOT" >
-| < EMPTY : "EMPTY" >
-| < NOT_EMPTY : "NOT_EMPTY" >
+| < NOT_EMPTY : "NOT EMPTY" >
 | < ALL : "ALL" >
 | < BUT : "BUT" >
 | < CHECK : "CHECK" >
 | < ASSERT : "ASSERT" >
-| < DERIVATION : "DERIVATION" >
-| < LEFT : "LEFT" >
-| < RIGHT : "RIGHT" >
-| < MID : "MID" >
-| < SIZE : "SIZE" >}
+| < DERIVATION : "DERIVATION" >}
 TOKEN : /* OPERATOR */
 {
   < LOGIC_OPER : "=" | ">" | "<" | ">=" | "<=" | "<>" >
